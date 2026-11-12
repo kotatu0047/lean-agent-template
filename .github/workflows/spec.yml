@@ -7,6 +7,8 @@ on:
 
 jobs:
   gate:
+    # テンプレートそのもの（Lean のライブラリがまだない）では走らせない
+    if: hashFiles('lakefile.toml', 'lakefile.lean') != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
