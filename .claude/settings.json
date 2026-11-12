@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(/spec/**)",
+      "Edit(/.claude/settings.json)",
+      "Edit(/.claude/settings.local.json)",
+      "Edit(/.claude/hooks/**)",
+      "Edit(/.github/workflows/**)",
+      "Edit(/.githooks/**)",
+      "Edit(/tools/check-all.sh)",
+      "Edit(/tools/scan-history.py)",
+      "Edit(/tools/scan-history.allow)",
+      "Edit(/tools/init.sh)",
+      "Edit(/lakefile.toml)",
+      "Edit(/lakefile.lean)",
+      "Edit(/lean-toolchain)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/spec/guard.py" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR\"/spec/stop-gate.sh", "timeout": 900 },
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/save-history.py" }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/save-history.py" }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+# 会話記録の検査（tools/scan-history.py）で、本物の秘密ではないと分かった文字列（1行1つの正規表現）。
+# 人が足す（エージェントは変えない）。例：\bexample-user@example\.jp\b

@@ -1,0 +1,13 @@
+#!/bin/bash
+# コミットの前の検査。有効にする：git config core.hooksPath .githooks（tools/init.sh が行う）
+#
+# 1. ステージした会話記録（.claude-history/）の足された行に、秘密の情報らしい文字列がないか
+# 2. 会話記録以外の変更があれば、tools/check-all.sh（証明のゲートと、プロジェクトの追加の検査）
+ROOT=$(git rev-parse --show-toplevel)
+python3 "$ROOT/tools/scan-history.py" || {
+  echo "会話記録に秘密の情報らしい文字列があります。本物でなければ tools/scan-history.allow に足してください。" >&2
+  exit 1
+}
+if git diff --cached --name-only | grep -qv '^\.claude-history/'; then
+  exec bash "$ROOT/tools/check-all.sh"
+fi
