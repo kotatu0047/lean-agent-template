@@ -7,11 +7,15 @@ on:
 
 jobs:
   gate:
-    # テンプレートそのもの（Lean のライブラリがまだない）では走らせない
-    if: hashFiles('lakefile.toml', 'lakefile.lean') != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
-      - name: 証明のゲート（spec/check.sh）
+      # テンプレートそのもの（Lean のライブラリがまだない）では、ここから先を飛ばす
+      - id: lib
+        run: |
+          if [ -f lakefile.toml ] || [ -f lakefile.lean ]; then echo "found=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.lib.outputs.found == 'true'
+        uses: leanprover/lean-action@v1
+      - if: steps.lib.outputs.found == 'true'
+        name: 証明のゲート（spec/check.sh）
         run: bash spec/check.sh
